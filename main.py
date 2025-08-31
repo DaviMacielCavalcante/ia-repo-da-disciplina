@@ -24,8 +24,8 @@ tree.add_child('H', 'I', 40)
 #caminho, custo = tree.busca_largura('A', 'M')
 #caminho, custo = tree.busca_custo_uniforme('A', 'M')
 #caminho, custo = tree.busca_gulosa('A', 'M')
-
-caminho, custo = tree.busca_a_estrela('A', 'M')
+#caminho, custo = tree.busca_a_estrela('A', 'M')
+caminho, custo = tree.busca_bidirecional('A', 'M')
 
 print(f"Caminho encontrado: {caminho} com custo total: {custo}")
 

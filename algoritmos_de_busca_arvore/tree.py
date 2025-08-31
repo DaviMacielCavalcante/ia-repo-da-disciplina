@@ -151,3 +151,46 @@ class Tree:
                     new_path = path + [child.value]
 
                     heapq.heappush(heap, (new_f, child, new_path, new_g))
+
+    def busca_bidirecional(self, start, goal):
+    
+        queue_start = [(self.find_node(start), [start], 0)]
+        queue_goal = [(self.find_node(goal), [goal], 0)]
+
+        visited_start = {start: (0, [start])}
+        visited_goal = {goal: (0, [goal])}
+
+        while queue_start or queue_goal:
+            
+            if queue_start:
+                current_node_start, path_start, cost_start = queue_start.pop(0)
+
+                if current_node_start.value in visited_goal:
+                    path_goal_reversed = list(reversed(visited_goal[current_node_start.value][1]))
+                    final_path = path_start + path_goal_reversed[1:]  
+                    total_cost = cost_start + visited_goal[current_node_start.value][0]
+                    return (final_path, total_cost)
+                
+                for child in current_node_start.childs:
+                    if child.value not in visited_start:
+                        new_cost = cost_start + child.cost
+                        new_path = path_start + [child.value]
+                        queue_start.append((child, new_path, new_cost))
+                        visited_start[child.value] = (new_cost, new_path)
+
+            if queue_goal:
+                current_node_goal, path_goal, cost_goal = queue_goal.pop(0)
+
+                if current_node_goal.value in visited_start:
+                    path_goal_reversed = list(reversed(path_goal))
+                    final_path = visited_start[current_node_goal.value][1] + path_goal_reversed[1:]  
+                    total_cost = cost_goal + visited_start[current_node_goal.value][0]
+                    return (final_path, total_cost)
+                
+                if current_node_goal.father:
+                    father = current_node_goal.father
+                    if father.value not in visited_goal:
+                        new_cost = cost_goal + current_node_goal.cost
+                        new_path = path_goal + [father.value]  
+                        queue_goal.append((father, new_path, new_cost))
+                        visited_goal[father.value] = (new_cost, new_path)
