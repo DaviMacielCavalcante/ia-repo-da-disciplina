@@ -25,7 +25,7 @@ def fuzzy_config(show_pertinencia=False):
     mult["medio"] = fuzz.trapmf(mult.universe, [1.0, 1.2, 1.4, 1.6])
     mult["alto"] = fuzz.trapmf(mult.universe, [1.4, 1.7, 2.1, 2.5])
     mult["altissimo"] = fuzz.trapmf(mult.universe, [2.3, 2.7, 3.0, 3.0])
-    
+
     if show_pertinencia:
         clima.view()
         qualidade_estrada.view()
@@ -65,22 +65,29 @@ def fuzzy_config(show_pertinencia=False):
         regra12,
     ]
 
-# Para ver os gráficos das funções de pertinência: 
+
+# Para ver os gráficos das funções de pertinência:
 # fuzzy_config(show_pertinencia=True)
+
+# TESTES:
 
 sistema_fuzzy = ctrl.ControlSystem(fuzzy_config())
 simulador = ctrl.ControlSystemSimulation(sistema_fuzzy)
 
+print("=== VALORES DE TESTE DA LÓGICA ===")
+
 casos_teste = [
-    (0, 0, "Pior caso"),        # clima ruim + estrada péssima
-    (10, 10, "Melhor caso"),    # clima bom + estrada boa
+    (0, 0, "Pior caso"),  # clima ruim + estrada péssima
+    (10, 10, "Melhor caso"),  # clima bom + estrada boa
     (0, 10, "Clima ruim, estrada boa"),
     (10, 0, "Clima bom, estrada péssima"),
     (5, 5, "Tudo médio"),
 ]
 
 for clima_val, estrada_val, descricao in casos_teste:
-    simulador.input['clima'] = clima_val
-    simulador.input['qualidade_estrada'] = estrada_val
+    simulador.input["clima"] = clima_val
+    simulador.input["qualidade_estrada"] = estrada_val
     simulador.compute()
     print(f"{descricao}: mult = {simulador.output['mult']:.2f}")
+    
+print("=== FIM DOS TESTES ===\n")
