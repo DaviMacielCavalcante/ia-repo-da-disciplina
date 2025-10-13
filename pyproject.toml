@@ -9,4 +9,6 @@ dependencies = [
     "networkx>=3.5",
     "plotly>=6.3.0",
     "pygraphviz>=1.14",
+    "scikit-fuzzy>=0.5.0",
+    "scipy>=1.16.2",
 ]
