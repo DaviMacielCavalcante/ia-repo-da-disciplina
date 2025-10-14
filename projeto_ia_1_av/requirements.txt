@@ -4,3 +4,4 @@ packaging
 scipy        
 scikit-fuzzy 
 matplotlib
+pygame
