@@ -1,0 +1,7 @@
+networkx     
+numpy        
+packaging    
+scipy        
+scikit-fuzzy 
+matplotlib
+pygame
