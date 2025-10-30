@@ -1,86 +1,72 @@
-from projeto_ia_1_av.comparador import comparar_algoritmos, exibir_estatisticas_finais
-from projeto_ia_1_av.mapa_hyrule import construir_mapa_complexo
+from roleta_ag.individuo import Individuo
+from roleta_ag.roleta import Roleta
 
+pop = []
 
-from projeto_ia_1_av.mapa_hyrule import construir_mapa_complexo
-from projeto_ia_1_av.visualizador_mapa import VisualizadorMapa
+ind_a = Individuo("a", 30)
+ind_b = Individuo("b", 22)
+ind_c = Individuo("c", 45)
+ind_d = Individuo("d", 53)
+ind_e = Individuo("e", 21)
+ind_f = Individuo("f", 109)
 
+pop.append(ind_a)
+pop.append(ind_b)
+pop.append(ind_c)
+pop.append(ind_d)
+pop.append(ind_e)
+pop.append(ind_f)
 
-def main():
-    print("="*80)
-    print(" VISUALIZADOR INTERATIVO - MAPA DE HYRULE")
-    print("="*80)
-    print("\nCarregando mapa e calculando rotas...")
-    
-    # Constrói o mapa
-    mapa = construir_mapa_complexo()
-    
-    # Define origem e destino
-    origem = "Castelo de Hyrule"
-    destino = "Gerudo Town"
-    
-    print(f"\nBuscando rotas de '{origem}' para '{destino}'...\n")
-    
-    # Cria visualizador
-    # Se você tiver uma imagem do mapa de Hyrule, passe o caminho aqui:
-    # visualizador = VisualizadorMapa(imagem_mapa="caminho/para/hyrule_map.png")
-    visualizador = VisualizadorMapa()
-    
-    # Carrega as rotas
-    visualizador.carregar_rotas(mapa, origem, destino)
-    
-    print("Abrindo visualizador...")
-    print("\nControles:")
-    print("  • Arrastar mouse: Mover pelo mapa")
-    print("  • Scroll: Zoom in/out")
-    print("  • F: Mostrar/Ocultar caminho A* + Fuzzy")
-    print("  • T: Mostrar/Ocultar caminho A* Tradicional")
-    print("  • L: Mostrar/Ocultar labels dos nodos")
-    print("  • ESC: Sair\n")
-    
-    # Executa visualizador
-    visualizador.executar()
-
+roleta = Roleta(pop)
 
 if __name__ == "__main__":
-    main()
-
-# def main():
-#     print("=" * 80)
-#     print(" COMPARAÇÃO: A* TRADICIONAL vs A* + LÓGICA FUZZY")
-#     print("\n☀️ - O A* tradicional considera apenas a distância base.")
-#     print("🌦️ - O A* + Fuzzy avalia clima e qualidade da estrada.\n")
-
-#     # Cenários de teste escolhidos para destacar as diferenças
-#     cenarios = [
-#         (
-#             "Castelo de Hyrule",
-#             "Hateno Village",
-#             "Leste: Rota curta perigosa vs rota longa segura",
-#         ),
-#         (
-#             "Castelo de Hyrule",
-#             "Goron City",
-#             "Norte: Atalho arriscado vs caminho convencional",
-#         ),
-#         (
-#             "Great Plateau",
-#             "Gerudo Town",
-#             "Deserto: Direto pelo deserto vs contorno pela costa",
-#         ),
-#         ("Rito Village", "Vila Akkala", "Travessia completa: múltiplas opções de rota"),
-#     ]
-
-#     for origem, destino, descricao in cenarios:
-#         print(f"\n{'#' * 80}")
-#         print(f"CENÁRIO: {descricao}")
-#         mapa = construir_mapa_complexo()
-#         comparar_algoritmos(mapa, origem, destino, num_simulacoes=1)
-
-#         input("\nPressione ENTER para continuar para o próximo cenário...")
-
-#     exibir_estatisticas_finais()
-
-
-# if __name__ == "__main__":
-#     main()
+    print("\n" + "="*80)
+    print("ROLETA DE SELECAO - ALGORITMOS GENETICOS")
+    print("="*80)
+    
+    fitness_total = sum(ind.fitness for ind in pop)
+    intervalos = roleta.calcular_intervalos()
+    
+    print("\n=== ESTRUTURA DA ROLETA ===")
+    print(f"Fitness Total: {fitness_total}\n")
+    
+    print(f"{'Individuo':<12} {'Fitness':<10} {'Intervalo':<20} {'Percentual'}")
+    print("-" * 65)
+    
+    for ind in pop:
+        inicio, fim = intervalos[ind.name]
+        percentual = (ind.fitness / fitness_total) * 100
+        intervalo_str = f"[{inicio}, {fim})"
+        print(f"{ind.name:<12} {ind.fitness:<10} {intervalo_str:<20} {percentual:>5.2f}%")
+    
+    print("-" * 65)
+    
+    print("\nREPRESENTACAO VISUAL:")
+    print("-" * 65)
+    for ind in pop:
+        percentual = (ind.fitness / fitness_total) * 100
+        tamanho_barra = int((ind.fitness / fitness_total) * 50)
+        barra = "█" * tamanho_barra
+        print(f"{ind.name}: {barra} {percentual:.2f}%")
+    print("-" * 65)
+    
+    print("\n=== TESTES COM VALORES DO SLIDE ===")
+    print("Valores: [1, 61, 82, 21, 279, 6]\n")
+    
+    valores_slide = [1, 61, 82, 21, 279, 6]
+    
+    print(f"{'Sorteio':<10} {'Valor':<10} {'Intervalo':<20} {'Selecionado':<15} {'Fitness':<10} {'Percentual'}")
+    print("-" * 90)
+    
+    for i, valor in enumerate(valores_slide, 1):
+        selecionado = roleta.escolher(valor)
+        
+        if selecionado:
+            inicio, fim = intervalos[selecionado.name]
+            intervalo_str = f"[{inicio}, {fim})"
+            percentual = (selecionado.fitness / fitness_total) * 100
+            print(f"{i:<10} {valor:<10} {intervalo_str:<20} {selecionado.name:<15} {selecionado.fitness:<10} {percentual:>5.2f}%")
+        else:
+            print(f"{i:<10} {valor:<10} {'---':<20} {'ERRO':<15} {'---':<10} {'---'}")
+    
+    print("-" * 90)
