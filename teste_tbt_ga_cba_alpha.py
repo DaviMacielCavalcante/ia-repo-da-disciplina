@@ -3,7 +3,7 @@ Teste completo do Algoritmo Genético para o problema TBT.
 Executa múltiplas rodadas e coleta estatísticas.
 """
 
-from projeto_ia_experimental.individuo import TBTProblem
+from projeto_ia_experimental.problema import TBTProblem
 from projeto_ia_experimental.ag import AlgoritmoGenetico
 import numpy as np
 import matplotlib.pyplot as plt
