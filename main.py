@@ -15,15 +15,15 @@ import time
 
 # Parâmetros do AG
 config = {
-    'tamanho_populacao': 150,
-    'num_geracoes': 300,
+    'tamanho_populacao': 500,
+    'num_geracoes': 200,
     'taxa_crossover': 0.9,
-    'taxa_mutacao': 0.25,   
-    'tamanho_torneio': 2,
-    'num_elites': 1
+    'taxa_mutacao': 0.15,   
+    'tamanho_torneio': 3,
+    'num_elites': 2
 }
 # Número de execuções independentes
-num_execucoes = 20
+num_execucoes = 60
 
 # ==============================================================================
 # EXECUÇÃO DO EXPERIMENTO
@@ -55,7 +55,6 @@ for i in range(num_execucoes):
     print(f"EXECUÇÃO {i+1}/{num_execucoes}")
     print(f"{'─' * 80}")
     
-    # Criar AG (sem seed para execuções diferentes)
     ag = AlgoritmoGenetico(problem, config)
     
     # Medir tempo
@@ -65,7 +64,6 @@ for i in range(num_execucoes):
     tempo_exec = fim - inicio
     tempo_total += tempo_exec
     
-    # Extrair melhor solução
     melhor = resultado['melhor_individuo']
     
     # Armazenar informações
@@ -150,7 +148,6 @@ print("\n" + "=" * 80)
 print(" GERANDO GRÁFICOS")
 print("=" * 80)
 
-# Criar figura com múltiplos gráficos
 fig = plt.figure(figsize=(16, 10))
 
 # -------------------------

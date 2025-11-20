@@ -28,7 +28,7 @@ class TBTProblem:
     def constraints(self, x):
         x1, x2 = x[0], x[1]
 
-        common = np.sqrt(2*x1**2 + 2*x1 *x2) 
+        common = np.sqrt(2)*x1**2 + 2*x1 *x2
 
         r1 = ((np.sqrt(2)*x1 + x2) / common)*self.P - self.sigma
 
