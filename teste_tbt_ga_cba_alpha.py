@@ -273,7 +273,7 @@ ax6.grid(True, alpha=0.3, axis='y')
 # Salvar e mostrar
 # -------------------------
 plt.tight_layout()
-plt.savefig('resultado_experimento_completo.png', dpi=300, bbox_inches='tight')
+plt.savefig('resultado_experimento_tbt_ga_crossover_blx_alpha_completo.png', dpi=300, bbox_inches='tight')
 print("\n✓ Gráficos salvos em 'resultado_experimento_completo.png'")
 plt.show()
 
@@ -285,7 +285,7 @@ print("\n" + "=" * 80)
 print(" SALVANDO RESULTADOS")
 print("=" * 80)
 
-with open('resultados_experimento.txt', 'w', encoding='utf-8') as f:
+with open('resultado_experimento_tbt_ga_crossover_blx_alpha_completo.txt', 'w', encoding='utf-8') as f:
     f.write("=" * 80 + "\n")
     f.write(" RESULTADOS DO EXPERIMENTO - Three Bar Truss Problem\n")
     f.write("=" * 80 + "\n\n")
