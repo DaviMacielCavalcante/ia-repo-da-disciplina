@@ -8,13 +8,17 @@ from .operadores import selecao_torneio, crossover_blx_alpha, mutacao_gaussiana
 
 class AlgoritmoGenetico:
 
-    def __init__(self, problem, config):
+    def __init__(self, problem, config, crossover_operator=None):
         """
         Args:
             problem: instância do problema (ex: TBTProblem)
             config: dicionário com parâmetros do AG
+            crossover_operator: operador de crossover customizado (opcional)
+                                Se None, usa BLX-alpha padrão
         """
         self.problem = problem
+
+        self.crossover_operator = crossover_operator
 
         self.tamanho_populacao = config.get('tamanho_populacao', 50)
         self.num_geracoes = config.get('num_geracoes', 100)
@@ -54,7 +58,10 @@ class AlgoritmoGenetico:
                 mae = selecao_torneio(pops, self.tamanho_torneio)
 
                 if np.random.random() < self.taxa_crossover:
-                    filho1, filho2 = crossover_blx_alpha(pai, mae)
+                    if self.crossover_operator:
+                        filho1, filho2 = self.crossover_operator.apply(pai, mae)
+                    else:
+                        filho1, filho2 = crossover_blx_alpha(pai, mae)
 
                 else:
                     filho1 = pai.copy()

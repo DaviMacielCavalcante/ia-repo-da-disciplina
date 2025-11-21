@@ -5,6 +5,7 @@ Executa múltiplas rodadas e coleta estatísticas.
 
 from projeto_ia_experimental.problema import TBTProblem
 from projeto_ia_experimental.ag import AlgoritmoGenetico
+from projeto_ia_experimental.gbx import GBXCrossover
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -22,6 +23,9 @@ config = {
     'tamanho_torneio': 3,
     'num_elites': 2
 }
+
+gbx = GBXCrossover(num_rounds=10)
+
 # Número de execuções independentes
 num_execucoes = 60
 
@@ -55,7 +59,7 @@ for i in range(num_execucoes):
     print(f"EXECUÇÃO {i+1}/{num_execucoes}")
     print(f"{'─' * 80}")
     
-    ag = AlgoritmoGenetico(problem, config)
+    ag = AlgoritmoGenetico(problem, config, crossover_operator=gbx)
     
     # Medir tempo
     inicio = time.time()
@@ -273,8 +277,8 @@ ax6.grid(True, alpha=0.3, axis='y')
 # Salvar e mostrar
 # -------------------------
 plt.tight_layout()
-plt.savefig('resultado_experimento_tbt_ga_crossover_blx_alpha_completo.png', dpi=300, bbox_inches='tight')
-print("\n✓ Gráficos salvos em 'resultado_experimento_completo.png'")
+plt.savefig('resultado_experimento_teste_tbt_ga_gbx_completo.png', dpi=300, bbox_inches='tight')
+print("\n✓ Gráficos salvos em 'resultado_experimento_teste_tbt_ga_gbx_completo.png'")
 plt.show()
 
 # ==============================================================================
@@ -285,7 +289,7 @@ print("\n" + "=" * 80)
 print(" SALVANDO RESULTADOS")
 print("=" * 80)
 
-with open('resultado_experimento_tbt_ga_crossover_blx_alpha_completo.txt', 'w', encoding='utf-8') as f:
+with open('resultado_experimento_teste_tbt_ga_gbx_completo.txt', 'w', encoding='utf-8') as f:
     f.write("=" * 80 + "\n")
     f.write(" RESULTADOS DO EXPERIMENTO - Three Bar Truss Problem\n")
     f.write("=" * 80 + "\n\n")
@@ -327,7 +331,7 @@ with open('resultado_experimento_tbt_ga_crossover_blx_alpha_completo.txt', 'w', 
     f.write(f"\nTEMPO TOTAL: {tempo_total:.2f}s ({tempo_total/60:.2f} minutos)\n")
     f.write(f"TEMPO MÉDIO: {tempo_total/num_execucoes:.2f}s por execução\n")
 
-print("✓ Resultados salvos em 'resultados_experimento.txt'")
+print("✓ Resultados salvos em 'resultado_experimento_teste_tbt_ga_gbx_completo.txt'")
 
 print("\n" + "=" * 80)
 print(" EXPERIMENTO CONCLUÍDO!")

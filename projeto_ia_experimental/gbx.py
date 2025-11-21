@@ -108,10 +108,142 @@ class GBXCrossover:
         return payoff_total
     
     def _calcular_payoffs(self, min_val, max_val):
-         
+        """
+        Calcula T, R, P, S do Dilema do Prisioneiro.
+        
+        Baseado nas Equations 13-16 do artigo.
+        
+        Args:
+            min_val: Limite inferior da busca
+            max_val: Limite superior da busca
+            
+        Returns:
+            tuple: (T, R, P, S) - valores do payoff
+        """
+             
+        phi = np.random.uniform(self.phi_min, self.phi_max)
+        diff = abs(max_val - min_val)
 
+        T = phi * (diff*0.4) / self.num_rounds
+        R = phi * (diff*0.3) / self.num_rounds
+        P = phi * (diff*0.2) / self.num_rounds
+        S = phi * (diff*0.1) / self.num_rounds
 
+        return T, R, P, S
+    
+    def _calcular_limites(self, gene_pai, direcao, lower_bound, upper_bound):
+        """
+        Calcula Min e Max baseado na direção de busca.
+        
+        Baseado nas Equations 18-19 do artigo.
+        
+        Args:
+            gene_pai: Valor do gene do pai
+            direcao: +1 (crescente) ou -1 (decrescente)
+            lower_bound: Limite inferior da variável
+            upper_bound: Limite superior da variável
+            
+        Returns:
+            tuple: (min_val, max_val) 
+        """
 
+        if direcao == -1:
+            min_val = lower_bound
+            max_val = gene_pai 
+        else:
+            min_val = gene_pai
+            max_val = upper_bound
 
+        return min_val, max_val
 
+    def _gerar_gene(self, gene_pai, Z, direcao, lower_bound, upper_bound):
+        """
+        Gera o gene do filho baseado no payoff acumulado.
+        
+        Baseado na Equation 23 do artigo.
+        
+        Args:
+            gene_pai: Valor do gene do pai
+            Z: Payoff total acumulado no jogo
+            direcao: +1 (crescente) ou -1 (decrescente)
+            lower_bound: Limite inferior da variável
+            upper_bound: Limite superior da variável
+            
+        Returns:
+            float: Valor do gene do filho
+        """
 
+        normal_sample = abs(np.random.normal(0, 1))
+
+        if direcao == -1:
+            novo_gene = gene_pai - (Z * normal_sample)
+        else:
+            novo_gene = gene_pai + (Z * normal_sample)
+
+        novo_gene = np.clip(novo_gene, lower_bound, upper_bound)
+
+        return novo_gene
+
+    def apply(self, pai, mae):
+        """
+        Aplica o crossover GBX entre dois pais.
+        
+        Args:
+            pai: Individuo (pai)
+            mae: Individuo (mae)
+            
+        Returns:
+            tuple: (filho1, filho2) - dois novos Individuos
+        """
+
+        problem = pai.problem
+        n_vars = problem.n_vars
+
+        genes_filho1 = np.zeros(n_vars)
+        genes_filho2 = np.zeros(n_vars)
+
+        estrategia_pai = self._gerar_estrategia_aleatoria()
+        estrategia_mae = self._gerar_estrategia_aleatoria()
+
+        for j in range(n_vars):
+            direcao_pai = 1 if np.random.random() > 0.5 else -1
+            direcao_mae = 1 if np.random.random() > 0.5 else -1 
+
+            min_pai, max_pai = self._calcular_limites(
+                pai.genes[j], direcao_pai, 
+                problem.lower_bounds[j], problem.upper_bounds[j]
+            )
+
+            min_mae, max_mae = self._calcular_limites(
+                mae.genes[j], direcao_mae, 
+                problem.lower_bounds[j], problem.upper_bounds[j]
+            )
+
+            t_pai, r_pai, p_pai, s_pai = self._calcular_payoffs(min_pai, max_pai)
+
+            t_mae, r_mae, p_mae, s_mae = self._calcular_payoffs(min_mae, max_mae)
+
+            z_pai = self._jogar_dilema(
+                estrategia_pai, estrategia_mae,
+                t_pai, r_pai, p_pai, s_pai
+            )
+
+            z_mae = self._jogar_dilema(
+                estrategia_mae, estrategia_pai,
+                t_mae, r_mae, p_mae, s_mae
+            )
+
+            genes_filho1[j] = self._gerar_gene(
+                pai.genes[j], z_pai, direcao_pai,
+                problem.lower_bounds[j], problem.upper_bounds[j]
+            )
+
+            genes_filho2[j] = self._gerar_gene(
+                mae.genes[j], z_mae, direcao_mae,
+                problem.lower_bounds[j], problem.upper_bounds[j]
+            )
+
+        filho1 = Individuo(genes_filho1, problem)
+        filho2 = Individuo(genes_filho2, problem)
+
+        return filho1, filho2
