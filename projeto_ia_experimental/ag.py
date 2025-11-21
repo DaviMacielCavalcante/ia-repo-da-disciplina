@@ -46,6 +46,9 @@ class AlgoritmoGenetico:
 
         for generation in range(self.num_geracoes):
 
+            if self.crossover_operator and hasattr(self.crossover_operator, "current_iter"):
+                self.crossover_operator.current_iter = generation
+
             new_generation = []
             elites = sorted(pops)[:self.num_elites]
 
