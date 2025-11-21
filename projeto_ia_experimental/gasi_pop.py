@@ -45,6 +45,9 @@ class GASIPOP:
         self.beta_start = config.get('beta_start', 0.9)
         self.beta_end = config.get('beta_end', 0.3)
         self.jogo = JogoDilema(num_rounds=self.num_rounds)
+        self.historico_melhor_fitness = []
+        self.historico_fitness_medio = []
+        self.historico_num_viaveis = []
         
     def _normalizar_fitness(self, pop):
 
@@ -102,15 +105,18 @@ class GASIPOP:
         # Iterar pelos pares (0 vs 1, 2 vs 3, etc.)
         for i in range(0, len(pop) - 1, 2):
 
-            estrategia1 = self.jogo._gerar_estrategia_aleatoria()
-            estrategia2 = self.jogo._gerar_estrategia_aleatoria()
+            
 
-            payoff1 = self.jogo._jogar_dilema(estrategia1, estrategia2, t, r, p ,s)
+            if np.random.random() < self.game_rate:
+                
+                estrategia1 = self.jogo._gerar_estrategia_aleatoria()
+                estrategia2 = self.jogo._gerar_estrategia_aleatoria()
 
-            payoff2 = self.jogo._jogar_dilema(estrategia2, estrategia1, t, r, p ,s)
+                payoff1 = self.jogo._jogar_dilema(estrategia1, estrategia2, t, r, p ,s)
+                payoff2 = self.jogo._jogar_dilema(estrategia2, estrategia1, t, r, p ,s)
 
-            fitness_social[i] = payoff1
-            fitness_social[i+1] = payoff2
+                fitness_social[i] = payoff1
+                fitness_social[i+1] = payoff2
         
         return fitness_social
     
@@ -146,6 +152,37 @@ class GASIPOP:
         
         return f_total
     
+    def _selecao_torneio(self, pop):
+        """
+        Seleção por torneio usando fitness total e regra de Deb.
+        """
+        
+        indices = np.random.choice(len(pop), size=self.tamanho_torneio, replace=False)
+        competidores = [pop[i] for i in indices]
+        
+        # Encontrar o melhor usando regra de Deb + fitness total
+        melhor = competidores[0]
+        
+        for ind in competidores[1:]:
+            # Comparar 'ind' com 'melhor'
+            
+            if ind.is_feasible() and not melhor.is_feasible():
+                # ind é viável, melhor não é → ind vence
+                melhor = ind
+            elif not ind.is_feasible() and melhor.is_feasible():
+                # ind não é viável, melhor é → melhor continua
+                pass
+            elif ind.is_feasible() and melhor.is_feasible():
+                # Ambos viáveis → maior fitness_total vence
+                if ind.fitness_total > melhor.fitness_total:
+                    melhor = ind
+            else:
+                # Ambos inviáveis → menor violação vence
+                if ind.violation_sum < melhor.violation_sum:
+                    melhor = ind
+        
+        return melhor
+    
     def executar(self):
         """
         Executa o algoritmo GASI-POP.
@@ -167,10 +204,6 @@ class GASIPOP:
             new_generation = []
             elites = sorted(pops)[:self.num_elites]
 
-            # Guardar fitness total em cada indivíduo
-            for i, ind in enumerate(pops):
-                ind.fitness_total = f_total[i]
-
             for elite in elites:
                 new_generation.append(elite.copy())
 
@@ -180,10 +213,56 @@ class GASIPOP:
 
             f_total = self._calcular_fitness_total(f_normalizado, f_social, generation)
 
+            # Guardar fitness total em cada indivíduo
+            for i, ind in enumerate(pops):
+                ind.fitness_total = f_total[i]
+
             while len(new_generation) < self.tamanho_populacao:
 
-                
+                pai = self._selecao_torneio(pops)
+                mae = self._selecao_torneio(pops)
 
+                
+                if np.random.random() < self.taxa_crossover:
+                    if self.crossover_operator:
+                        filho1, filho2 = self.crossover_operator.apply(pai, mae)
+                    else:
+                        filho1, filho2 = crossover_blx_alpha(pai, mae)
+                else:
+                    filho1 = pai.copy()
+                    filho2 = mae.copy()
+
+
+                filho1 = mutacao_gaussiana(individuo=filho1, taxa_mutacao=self.taxa_mutacao)
+                filho2 = mutacao_gaussiana(individuo=filho2, taxa_mutacao=self.taxa_mutacao)
+
+                filho1.evaluate()
+                filho2.evaluate()
+
+                new_generation.append(filho1)
+                if len(new_generation) < self.tamanho_populacao:
+                    new_generation.append(filho2)
+
+            if (generation + 1) % 10 == 0:
+                print(f"Geração: {generation + 1}/{self.num_geracoes} | "
+                f"Melhor: {the_one.fitness:.4f} | "      
+                f"Médio: {mean_fitness:.4f} | "      
+                f"Viáveis: {n_viables}/{self.tamanho_populacao}")
+
+
+            pops = new_generation
+
+            the_one = min(pops)
+
+            fitness_values = [ind.fitness for ind in pops]
+
+            mean_fitness = np.mean(fitness_values)
+
+            n_viables = sum(1 for ind in pops if ind.is_feasible())
+
+            self.historico_melhor_fitness.append(the_one.fitness)
+            self.historico_fitness_medio.append(mean_fitness)
+            self.historico_num_viaveis.append(n_viables)
 
         the_one = min(pops)
 

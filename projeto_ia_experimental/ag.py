@@ -65,7 +65,6 @@ class AlgoritmoGenetico:
                         filho1, filho2 = self.crossover_operator.apply(pai, mae)
                     else:
                         filho1, filho2 = crossover_blx_alpha(pai, mae)
-
                 else:
                     filho1 = pai.copy()
                     filho2 = mae.copy()
