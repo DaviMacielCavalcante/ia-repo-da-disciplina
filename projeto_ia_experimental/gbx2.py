@@ -31,21 +31,7 @@ class GBX2Crossover:
         self.current_iter = current_iter
         self.max_iter = max_iter
         self.jogo = JogoDilema(num_rounds=self.num_rounds)
-
-    def apply(self, pai, mae):
-        """
-        Aplica o crossover GBX entre dois pais.
-        
-        Args:
-            pai: Individuo (pai)
-            mae: Individuo (mae)
-            
-        Returns:
-            tuple: (filho1, filho2)
-        """
-        pass 
-
-    
+ 
     def _calcular_payoffs(self, min_val, max_val):
         """
         Calcula T, R, P, S do Dilema do Prisioneiro.
