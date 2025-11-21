@@ -1,5 +1,3 @@
-import numpy as np
-    
 def compare_solutions(sol1, sol2):
     """
     Compara duas soluções usando o método de Deb.
@@ -76,7 +74,7 @@ class Individuo:
 
         return self.n_violations == 0 
 
-    def __lt__(self, other):
+    def __lt__(self, other): 
 
         if not self.evaluated:
             self.evaluate()
