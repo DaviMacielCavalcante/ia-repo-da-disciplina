@@ -5,6 +5,7 @@ Operador de crossover baseado em teoria dos jogos.
 
 import numpy as np
 from .individuo import Individuo
+from projeto_ia_experimental.jogo_dilema import JogoDilema
 
 class GBXCrossover:
     """
@@ -21,6 +22,7 @@ class GBXCrossover:
         self.num_rounds = num_rounds
         self.phi_min = phi_min 
         self.phi_max = phi_max
+        self.jogo = JogoDilema(num_rounds=self.num_rounds)
 
     def apply(self, pai, mae):
         """
@@ -34,78 +36,6 @@ class GBXCrossover:
             tuple: (filho1, filho2)
         """
         pass 
-
-    def _gerar_estrategia_aleatoria(self):
-        """
-        Sorteia uma estratégia aleatória para um jogador.
-        
-        Returns:
-            str: Uma das 4 estratégias ('ALL_C', 'ALL_D', 'TFT', 'RAND')
-        """
-
-        return np.random.choice(["ALL_C", "ALL_D", "TFT", "RAND"])
-    
-    def _decidir_jogada(self, estrategia, ultima_jogada_oponente):
-        """
-        Decide se vai cooperar (C) ou desertar (D) baseado na estratégia.
-        
-        Args:
-            estrategia: str - A estratégia do jogador
-            ultima_jogada_oponente: str - 'C', 'D' ou None (primeira rodada)
-            
-        Returns:
-            str: 'C' (cooperate) ou 'D' (defect)
-        """
-
-        if estrategia == "ALL_C":
-                return "C"
-        if estrategia == "ALL_D":
-                return "D" 
-        if estrategia == "TFT":
-                if ultima_jogada_oponente == None:
-                    return "C"
-                else:
-                    return ultima_jogada_oponente
-        if estrategia == "RAND":
-                return np.random.choice(["C", "D"])
-            
-    def _jogar_dilema(self, estrategia1, estrategia2, T, R, P, S):
-        """
-        Joga o Dilema do Prisioneiro iterado entre dois jogadores.
-        
-        Args:
-            estrategia1: Estratégia do jogador 1
-            estrategia2: Estratégia do jogador 2
-            T, R, P, S: Valores do payoff (Temptation, Reward, Punishment, Sucker)
-            
-        Returns:
-            float: Payoff total acumulado pelo jogador 1
-        """
-        
-        payoff_total = 0
-        ultima_jogada_jog1 = None
-        ultima_jogada_jog2 = None 
-
-        for rodada in range(self.num_rounds):
-
-            jogada1 = self._decidir_jogada(estrategia1, ultima_jogada_jog2)
-            jogada2 = self._decidir_jogada(estrategia2, ultima_jogada_jog1)
-
-            if jogada1 == "C" and jogada2 == "C":
-                payoff_rodada = R
-            elif jogada1 == "C" and jogada2 == "D":
-                payoff_rodada = S
-            elif jogada1 == "D" and jogada2 == "C":
-                payoff_rodada = T
-            elif jogada1 == "D" and jogada2 == "D":
-                payoff_rodada = P
-
-            payoff_total += payoff_rodada
-
-            ultima_jogada_jog1 = jogada1
-            ultima_jogada_jog2 = jogada2
-
-        return payoff_total
     
     def _calcular_payoffs(self, min_val, max_val):
         """
@@ -202,8 +132,8 @@ class GBXCrossover:
         genes_filho1 = np.zeros(n_vars)
         genes_filho2 = np.zeros(n_vars)
 
-        estrategia_pai = self._gerar_estrategia_aleatoria()
-        estrategia_mae = self._gerar_estrategia_aleatoria()
+        estrategia_pai = self.jogo._gerar_estrategia_aleatoria()
+        estrategia_mae = self.jogo._gerar_estrategia_aleatoria()
 
         for j in range(n_vars):
             direcao_pai = 1 if np.random.random() > 0.5 else -1
@@ -223,12 +153,12 @@ class GBXCrossover:
 
             t_mae, r_mae, p_mae, s_mae = self._calcular_payoffs(min_mae, max_mae)
 
-            z_pai = self._jogar_dilema(
+            z_pai = self.jogo._jogar_dilema(
                 estrategia_pai, estrategia_mae,
                 t_pai, r_pai, p_pai, s_pai
             )
 
-            z_mae = self._jogar_dilema(
+            z_mae = self.jogo._jogar_dilema(
                 estrategia_mae, estrategia_pai,
                 t_mae, r_mae, p_mae, s_mae
             )
