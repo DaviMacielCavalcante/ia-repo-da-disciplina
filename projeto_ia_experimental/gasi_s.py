@@ -154,38 +154,72 @@ class GASIS:
     
     def _selecao_torneio(self, pop):
         """
-        Seleção por torneio usando fitness total e regra de Deb.
+        Seleção por torneio com eliminação simples (knockout).
+        O jogo acontece DURANTE o torneio.
         """
         
+        # Sortear competidores
         indices = np.random.choice(len(pop), size=self.tamanho_torneio, replace=False)
         competidores = [pop[i] for i in indices]
         
-        # Encontrar o melhor usando regra de Deb + fitness total
-        melhor = competidores[0]
-        
-        for ind in competidores[1:]:
-            # Comparar 'ind' com 'melhor'
+        # Eliminação simples até sobrar 1
+        while len(competidores) > 1:
+            proxima_rodada = []
             
-            if ind.is_feasible() and not melhor.is_feasible():
-                # ind é viável, melhor não é → ind vence
-                melhor = ind
-            elif not ind.is_feasible() and melhor.is_feasible():
-                # ind não é viável, melhor é → melhor continua
-                pass
-            elif ind.is_feasible() and melhor.is_feasible():
-                # Ambos viáveis → maior fitness_total vence
-                if ind.fitness_total > melhor.fitness_total:
-                    melhor = ind
+            # Comparar de 2 em 2
+            for i in range(0, len(competidores) - 1, 2):
+                vencedor = self._comparar_dois(competidores[i], competidores[i + 1])
+                proxima_rodada.append(vencedor)
+            
+            # Se sobrou um (número ímpar), passa direto
+            if len(competidores) % 2 == 1:
+                proxima_rodada.append(competidores[-1])
+            
+            competidores = proxima_rodada
+        
+        return competidores[0]
+    
+    def _comparar_dois(self, ind1, ind2):
+        """
+        Compara dois indivíduos usando jogo ou regra de Deb.
+        
+        Args:
+            ind1, ind2: Dois indivíduos
+            
+        Returns:
+            Individuo: O vencedor
+        """
+
+        t, r, p, s = self._calcular_payoffs()
+        
+        if np.random.random() < self.game_rate:
+             
+            estrategia1 = self.jogo._gerar_estrategia_aleatoria()
+            estrategia2 = self.jogo._gerar_estrategia_aleatoria()
+
+            payoff1 = self.jogo._jogar_dilema(estrategia1, estrategia2, t, r, p ,s)
+            payoff2 = self.jogo._jogar_dilema(estrategia2, estrategia1, t, r, p ,s)
+            
+            if payoff1 >= payoff2:
+                return ind1
+            else:
+                return ind2
+
+        else:
+            if ind1.is_feasible() and not ind2.is_feasible():
+                return ind1
+            elif not ind1.is_feasible() and ind2.is_feasible():
+                return ind2
+            elif ind1.is_feasible() and ind2.is_feasible():
+                # Ambos viáveis → menor fitness vence (minimização)
+                return ind1 if ind1.fitness <= ind2.fitness else ind2
             else:
                 # Ambos inviáveis → menor violação vence
-                if ind.violation_sum < melhor.violation_sum:
-                    melhor = ind
-        
-        return melhor
+                return ind1 if ind1.violation_sum <= ind2.violation_sum else ind2
     
     def executar(self):
         """
-        Executa o algoritmo GASI-POP.
+        Executa o algoritmo GASI-S.
         
         Returns:
             dict: Resultado com melhor indivíduo e histórico
@@ -207,15 +241,6 @@ class GASIS:
             for elite in elites:
                 new_generation.append(elite.copy())
 
-            f_normalizado = self._normalizar_fitness(pops)
-
-            f_social = self._interacao_social(pops)
-
-            f_total = self._calcular_fitness_total(f_normalizado, f_social, generation)
-
-            # Guardar fitness total em cada indivíduo
-            for i, ind in enumerate(pops):
-                ind.fitness_total = f_total[i]
 
             while len(new_generation) < self.tamanho_populacao:
 
