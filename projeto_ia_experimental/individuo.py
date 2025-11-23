@@ -45,11 +45,13 @@ class Individuo:
         Args:
             genes: array numpy com os valores das variáveis [x1, x2, ...]
             problem: instância de um problema de otimização
+            optimization: 'min' ou 'max' (default: 'min')
         """  
 
         self.genes = genes
         self.problem = problem
-
+        # Pega do problema, se não tiver assume 'min' (compatibilidade)
+        self.optimization = getattr(problem, 'optimization', 'min')
         self.fitness = None
         self.constraints = None 
         self.n_violations = None 
@@ -95,7 +97,13 @@ class Individuo:
 
         result = compare_solutions(sol1, sol2)
 
-        return result == 1
+        if self.optimization == 'max':
+            if self.is_feasible() == other.is_feasible():
+                return result == -1
+            else:
+                return result == 1
+        else:
+            return result == 1
     
     def __repr__(self):
         """Representação textual para print()"""
