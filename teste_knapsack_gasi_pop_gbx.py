@@ -7,8 +7,8 @@ from projeto_ia_experimental.gasi_pop import GASIPOP
 from projeto_ia_experimental.gbx import GBXCrossover
 
 # Problema simples
-weights = [2, 5, 3, 1, 4, 6, 2, 3]
-values = [10, 20, 15, 5, 12, 25, 8, 14]
+weights = [2, 5, 3, 1, 4, 6, 2, 3, 13, 28, 37, 2]
+values = [10, 20, 15, 5, 12, 25, 8, 14, 11, 14, 94, 6]
 capacity = 15
 
 problem = KnapsackProblem(weights, values, capacity)

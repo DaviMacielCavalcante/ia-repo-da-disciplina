@@ -9,17 +9,17 @@ from projeto_ia_experimental.gbx import GBXCrossover
 # Problema simples
 weights = [2, 5, 3, 1, 4, 6, 2, 3]
 values = [10, 20, 15, 5, 12, 25, 8, 14]
-capacity = 15
+capacity = 5
 
 problem = KnapsackProblem(weights, values, capacity)
 
 config = {
-    'tamanho_populacao': 50,
-    'num_geracoes': 50,
+    'tamanho_populacao': 500,
+    'num_geracoes': 200,
     'taxa_crossover': 0.9,
     'taxa_mutacao': 0.15,
     'tamanho_torneio': 3,
-    'num_elites': 2
+    'num_elites': 60
 }
 
 print("=" * 60)

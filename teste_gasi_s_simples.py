@@ -6,13 +6,13 @@ from projeto_ia_experimental.problema import TBTProblem
 from projeto_ia_experimental.gasi_s import GASIS
 
 config = {
-    'tamanho_populacao': 50,
-    'num_geracoes': 20,
+    'tamanho_populacao': 500,
+    'num_geracoes': 200,
     'taxa_crossover': 0.9,
     'taxa_mutacao': 0.15,
-    'tamanho_torneio': 4,  # Melhor ser potência de 2 para eliminação
+    'tamanho_torneio': 3,  # Melhor ser potência de 2 para eliminação
     'num_elites': 2,
-    'num_rounds': 10
+    'num_rounds': 60
 }
 
 problem = TBTProblem()
