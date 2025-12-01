@@ -97,9 +97,9 @@ Totalizando **9 combinações algorítmicas** testadas em múltiplos problemas d
 - 6 restrições (tensão, flambagem e limites geométricos)
 - Minimização de custo da coluna
 
-**Welded Beam Design (WBD1 e WBD2):**
+**Welded Beam Design (WBD1):**
 - 4 variáveis de decisão (dimensões da solda e da viga)
-- 6 restrições para WBD1, 7 restrições para WBD2
+- 6 restrições para WBD1
 - Minimização de custo de fabricação
 - Duas versões com diferentes formulações de cálculo
 
@@ -107,11 +107,6 @@ Totalizando **9 combinações algorítmicas** testadas em múltiplos problemas d
 - Representação por chaves aleatórias (random keys)
 - Restrição de capacidade da mochila
 - Maximização de valor dos itens selecionados
-
-**Speed Reducer Design (SRD11):**
-- 7 variáveis de decisão
-- 11 restrições
-- Minimização de peso do redutor
 
 ### Parâmetros Experimentais
 
@@ -178,9 +173,8 @@ Os testes comparativos estão disponíveis para cada problema implementado. Cada
 Os seguintes problemas foram implementados e testados:
 
 - **Three Bar Truss (TBT)** - Validado contra resultados do artigo
-- **Tabular Column Design (TCD)** - Implementado conforme equações 75-81 do artigo
-- **Welded Beam Design (WBD1 e WBD2)** - Implementadas ambas variantes (equações 82-97)
-- **Speed Reducer Design (SRD11)** - Implementado conforme equações do artigo
+- **Tabular Column Design (TCD)** - Implementado conforme o artigo
+- **Welded Beam Design (WBD1)** - Implementadas ambas variantes 
 - **Knapsack Problem** - Implementado com representação por chaves aleatórias
 
 ### Comparação com o Artigo Original
@@ -188,8 +182,7 @@ Os seguintes problemas foram implementados e testados:
 Os resultados obtidos foram comparados com as tabelas do artigo IEEE Access 2020:
 
 **Tabelas de referência:**
-- Tabela 8: Speed Reducer Design (SRD11)
-- Tabela 9: Welded Beam Design (WBD1 e WBD2)
+- Tabela 9: Welded Beam Design (WBD1)
 - Tabela 10: Tabular Column Design (TCD)
 - Tabela 13: Three Bar Truss (TBT)
 
@@ -198,11 +191,3 @@ Os resultados obtidos foram comparados com as tabelas do artigo IEEE Access 2020
 - Validação da metodologia GASI para controle de pressão seletiva
 - GBX e GBX2 demonstram efetividade no controle adaptativo de crossover
 - GASI-S frequentemente apresenta desempenho superior em problemas com muitas restrições
-
----
-
-## Referências
-
-**Artigo Base:**
-
-R. Lisbôa Pereira, C. R. H. Barbosa, A. C. Pereira Júnior, C. A. D. M. Delgado, W. A. de Almeida Macedo, and R. C. L. de Oliveira, "Game Theory and Social Interaction for Selection and Crossover Pressure Control in Genetic Algorithms," *IEEE Access*, vol. 8, pp. 144854-144880, 2020.
