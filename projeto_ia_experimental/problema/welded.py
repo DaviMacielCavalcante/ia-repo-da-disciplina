@@ -91,12 +91,11 @@ class WeldedBeamWBD1(ProblemaOptimizacao):
 
     def _J_wbd1(self, x1: float, x2: float, x3: float) -> float:
         """
-        Momento polar de inércia J(x) para WBD1 (eq. 93, primeira linha).
-        Esta é uma das formulações clássicas usadas no benchmark.
+        Momento polar de inércia J(x) para WBD1 (eq. 93, primeira linha):
+        J(x) = 2 * (x1*x2/√2) * [x2²/12 + ((x1+x3)/2)²]
         """
-        # Forma típica usada na literatura do problema:
         return 2.0 * (x1 * x2 / np.sqrt(2.0)) * (
-            x2**2 / 12.0 + (x1 + x3)**2 / 4.0
+            x2**2 / 12.0 + ((x1 + x3) / 2.0)**2
         )
 
     def _tau1(self, x1: float, x2: float) -> float:
@@ -140,7 +139,8 @@ class WeldedBeamWBD1(ProblemaOptimizacao):
 
     def _Pc_wbd1(self, x3: float, x4: float) -> float:
         """
-        Carga crítica de flambagem - WBD1 (eq. 97, primeira linha).
+        Carga crítica de flambagem - WBD1 (eq. 97, primeira linha):
+        Pc(x) = (4.013/L²) * √(E*G*x3²*x4⁶/36) * [1 - (x3/(2L))*√(E/(4G))]
         """
         raiz = np.sqrt(self.E * self.G * x3**2 * x4**6 / 36.0)
         fator = 1.0 - x3 * np.sqrt(self.E / (4.0 * self.G)) / (2.0 * self.L)
@@ -191,10 +191,11 @@ class WeldedBeamWBD2(WeldedBeamWBD1):
 
     def _J_wbd2(self, x1: float, x2: float, x3: float) -> float:
         """
-        Momento polar de inércia J(x) para WBD2 (eq. 93, segunda linha).
+        Momento polar de inércia J(x) para WBD2 (eq. 93, segunda linha):
+        J(x) = 2 * (√2*x1*x2) * [x2²/4 + ((x1+x3)/2)²]
         """
         return 2.0 * (np.sqrt(2.0) * x1 * x2) * (
-            x2**2 / 4.0 + (x1 + x3)**2 / 2.0
+            x2**2 / 4.0 + ((x1 + x3) / 2.0)**2
         )
 
     def _delta_wbd2(self, x3: float, x4: float) -> float:
@@ -206,8 +207,9 @@ class WeldedBeamWBD2(WeldedBeamWBD1):
 
     def _Pc_wbd2(self, x3: float, x4: float) -> float:
         """
-        Carga crítica de flambagem - WBD2 (eq. 97, segunda linha).
+        Carga crítica de flambagem - WBD2 (eq. 97, segunda linha):
+        Pc(x) = (4.013*E/L²) * √(x3²*x4⁶/36) * [1 - (x3/(2L))*√(E/(4G))]
         """
-        raiz = np.sqrt(self.E * x3**2 * x4**6 / 36.0)
+        raiz = np.sqrt(x3**2 * x4**6 / 36.0)
         fator = 1.0 - x3 * np.sqrt(self.E / (4.0 * self.G)) / (2.0 * self.L)
-        return 4.013 * raiz * fator / (self.L**2)
+        return 4.013 * self.E * raiz * fator / (self.L**2)
