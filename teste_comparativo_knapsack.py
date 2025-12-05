@@ -33,8 +33,8 @@ from projeto_ia_experimental.gbx2 import GBX2Crossover
 # Parâmetros dos experimentos
 CONFIG_GERAL = {
     'num_execucoes': 10,           # 30 execuções independentes (como no artigo)
-    'tamanho_populacao': 500,
-    'num_geracoes': 200,
+    'tamanho_populacao': 150,
+    'num_geracoes': 50,
     'taxa_crossover': 0.9,
     'taxa_mutacao': 0.15,
     'tamanho_torneio': 3,
